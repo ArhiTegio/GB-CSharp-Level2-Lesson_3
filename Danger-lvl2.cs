@@ -15,6 +15,7 @@ namespace Тест_OpenTK
     {
         public Danger_lvl2(PointGrath pos, Speed dir, PointGrath size, Screen screen) : base(pos, dir, size, screen)
         {
+
         }
 
         /// <summary>
@@ -39,6 +40,12 @@ namespace Тест_OpenTK
                 GL.Vertex2((float)(pos.X + l * Math.Cos(a)), (float)(pos.Y + l * Math.Sin(a)));
                 a += da;
             }
+            GL.End();
+
+            GL.LineWidth(2);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex2(pos.X - dir.X * 8, pos.Y - dir.Y * 8);
+            GL.Vertex2(pos.X - dir.X * 20, pos.Y - dir.Y * 20);
             GL.End();
 
             return Update(r);

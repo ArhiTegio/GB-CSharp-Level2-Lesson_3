@@ -14,6 +14,7 @@ namespace Тест_OpenTK
     {
         public Erath(PointGrath pos, Speed dir, PointGrath size, Screen screen) : base(pos, dir, size, screen)
         {
+
         }
 
         public override bool Draw(Random r)

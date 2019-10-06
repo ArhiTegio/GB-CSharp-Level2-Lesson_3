@@ -12,22 +12,28 @@ namespace Тест_OpenTK
 {
     class Star : Background
     {
+        int color = 0;
         public Star(PointGrath pos, Speed dir, PointGrath size, Screen screen) : base(pos, dir, size, screen)
         {
         }
 
         public override bool Draw(Random r)
         {
-            GL.Color3(Color.LightGray);
+            color = 0;
+            if (r.Next(0, 30) > 10)
+                color = r.Next(160, 255);
+
+            GL.Color3((byte)color, (byte)color, (byte)color);
             GL.LineWidth(0.3f);
 
             GL.Begin(PrimitiveType.Lines);
-            GL.Vertex2(pos.X + size.X / 2, screen.Height - pos.Y);
+            GL.Vertex2(pos.X + (size.X / 2)*2, screen.Height - pos.Y);
             GL.Vertex2(pos.X - size.X / 2, screen.Height - pos.Y);
 
-            GL.Vertex2(pos.X, screen.Height - pos.Y + size.X / 2);
-            GL.Vertex2(pos.X, screen.Height - pos.Y - size.X / 2);                
+            GL.Vertex2(pos.X, screen.Height - pos.Y + (size.X / 2));
+            GL.Vertex2(pos.X, screen.Height - pos.Y - size.X / 2);
             GL.End();
+            
             return Update(r);
         }
 

@@ -61,10 +61,17 @@
     <Compile Include="AboutTheProgram.Designer.cs">
       <DependentUpon>AboutTheProgram.cs</DependentUpon>
     </Compile>
+    <Compile Include="Asteroid.cs" />
     <Compile Include="Background.cs" />
+    <Compile Include="BaseObject.cs" />
+    <Compile Include="Bullet.cs" />
     <Compile Include="Danger-lvl2.cs" />
     <Compile Include="Danger.cs" />
-    <Compile Include="Erath.cs" />
+    <Compile Include="Elements.cs" />
+    <Compile Include="Earth.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Medicine.cs" />
+    <Compile Include="MyException.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +79,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
+    <Compile Include="ICollision.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +89,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Star.cs" />
+    <Compile Include="TextGame.cs" />
     <EmbeddedResource Include="AboutTheProgram.resx">
       <DependentUpon>AboutTheProgram.cs</DependentUpon>
     </EmbeddedResource>
@@ -108,12 +117,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Earth.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="network.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\Кнопка.png" />
     <None Include="Resources\d11fed8f3201cb81012bb4984352d580.jpg" />
     <None Include="Resources\expand-button-up.png" />
+    <Content Include="rocket.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="rocket2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

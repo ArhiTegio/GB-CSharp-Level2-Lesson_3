@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Тест_OpenTK
 {
-    class Danger
+    class Danger : ICollision
     {
         protected Bitmap bit;
         protected byte[] bitByte;
@@ -25,7 +25,9 @@ namespace Тест_OpenTK
             this.pos = pos;
             this.dir = dir;
             this.size = size;
+
             bit = (Bitmap)Image.FromFile("network.png");
+            //bitByte = Elements.;
         }
         /// <summary>
         /// Построить объект
@@ -35,19 +37,40 @@ namespace Тест_OpenTK
         public virtual bool Draw(Random r)
         {
             //Построение круга
-            //GL.Color3(Color.Red);
-            //GL.LineWidth(1);
-            //GL.Begin(PrimitiveType.LineLoop);
-            //for (var i = 0; i <= 25; i++)
-            //{
-            //    var a = (float)i / 25.0f * 3.1415f * 2.00f;
-            //    GL.Vertex2(pos.X + Math.Cos(a) * size.X, pos.Y + Math.Sin(a) * size.Y);
-            //}
-            //GL.End();
+            GL.Color3(Color.Black);
+            GL.LineWidth(1);
+            GL.Begin(PrimitiveType.TriangleFan);
+            var b = 16f;
+            for (var i = 0; i <= b; i++)
+            {
+                var a = (float)i / b * 3.1415f * 2.00f;
+                GL.Vertex2(pos.X + Math.Cos(a) * size.X, pos.Y + Math.Sin(a) * size.Y);
+            }
+            GL.End();
+
+            GL.Color3(Color.Red);
+            GL.Begin(PrimitiveType.LineLoop);
+            for (var i = 0; i <= b; i++)
+            {
+                var a = (float)i / b * 3.1415f * 2.00f;
+                GL.Vertex2(pos.X + Math.Cos(a) * size.X, pos.Y + Math.Sin(a) * size.Y);
+                GL.Vertex2(pos.X + Math.Cos(a) * size.X - dir.X, pos.Y + Math.Sin(a) * size.Y - dir.Y);
+            }
+            GL.End();
+
+
+            GL.LineWidth(2);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex2(pos.X - dir.X * 8, pos.Y - dir.Y * 8);
+            GL.Vertex2(pos.X - dir.X * 20, pos.Y - dir.Y * 20);
+            GL.End();
+
+
 
             //Построение растрового изображения с произвольным (белым) цветом
-            GL.Color3(Color.Red);
-            PrintSpaceShip2D((float)pos.X - bit.Width / 2, (float)pos.Y + bit.Height / 2);
+            //GL.Color3(Color.Red);
+            //Print2D((float)pos.X - bit.Width / 2, (float)pos.Y + bit.Height / 2);
+            //return true;
             return Update(r);
         }
 
@@ -59,8 +82,8 @@ namespace Тест_OpenTK
         /// <returns></returns>
         public virtual bool Update(Random r)
         {
-            pos.X += (int)(Math.Round(dir.X, 3) + r.NextDouble() * 1);
-            pos.Y += (int)(Math.Round(dir.Y, 3) + r.NextDouble() * 1);
+            pos.X += (int)(Math.Round(dir.X, 3));
+            pos.Y += (int)(Math.Round(dir.Y, 3));
             if (pos.X < 0 + (size.X / 2)) dir.X = -dir.X;
             if (pos.X > screen.Width - size.X) dir.X = -dir.X;
             if (pos.Y < 0 + (size.Y / 2)) dir.Y = -dir.Y;
@@ -78,7 +101,7 @@ namespace Тест_OpenTK
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        private void PrintSpaceShip2D(float x, float y)
+        private void Print2D(float x, float y)
         {
             GL.RasterPos2(x, y);
             if (bitByte == null || bitByte.Length == 0)
@@ -123,5 +146,17 @@ namespace Тест_OpenTK
             }
             return list.ToArray();
         }
+
+        /// <summary>
+        /// Проверка на пересечение двух объектова
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public bool Collision(ICollision o) => o.Rect.IntersectsWith(this.Rect);
+
+        /// <summary>
+        /// Получить расположение и габариты объекта
+        /// </summary>
+        public Rectangle Rect => new Rectangle((int)pos.X * 1000, (int)pos.Y * 1000, (int)size.X * 1000, (int)size.Y * 1000);
     }
 }
