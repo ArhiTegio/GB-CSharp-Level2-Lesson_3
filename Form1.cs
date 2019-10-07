@@ -14,7 +14,6 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using OpenTK.Platform.Windows;
-using Tao.FreeGlut;
 
 namespace Тест_OpenTK
 {
