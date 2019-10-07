@@ -29,6 +29,15 @@ namespace Тест_OpenTK
             _energy -= n;
         }
 
+        public void Heal(int n)
+        {
+            if (_energy < 100)
+                _energy += n;
+
+            if (_energy > 100)
+                _energy = 100;
+        }
+
         public Player(PointGrath pos, Speed dir, PointGrath size, Screen screen) : base(pos, dir, size, screen)
         {
             if (pos.X < 0 || pos.X > screen.Width || pos.Y < 0 || pos.Y > screen.Height ||

@@ -21,6 +21,7 @@ namespace Тест_OpenTK
     {
         event Action<string, double, double> LogEvent;
 
+        int score = 0;
         bool finish = false;
         // размеры окна 
         Screen screen = new Screen();
@@ -48,6 +49,7 @@ namespace Тест_OpenTK
         List<Background> backgrounds = new List<Background>();
         List<Danger> dangerous = new List<Danger>();
         List<Bullet> bullet = new List<Bullet>();
+        List<Medicine> medicine = new List<Medicine>();
 
         Player player;
 
@@ -64,7 +66,7 @@ namespace Тест_OpenTK
             glControl.CreateControl();
             glControl.Width = Width - 16;
             glControl.Height = Height - 63;
-            glControl.Location = new Point(0,24);
+            glControl.Location = new Point(0, 24);
             this.Controls.Add(glControl);
             glControl_Load();
             glControl.MouseMove += glControl_MouseMove;
@@ -77,7 +79,6 @@ namespace Тест_OpenTK
             glControl.MouseDown += new MouseEventHandler(Form1_MouseDown);
             FPS.Start();
         }
-
 
         private void control_Paint(object sender, PaintEventArgs e) => glControl.SwapBuffers();
 
@@ -100,9 +101,9 @@ namespace Тест_OpenTK
             GL.Viewport(0, 0, glControl.Width, glControl.Height);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            if ((float)glControl.Width <= (float)glControl.Height) screen = new Screen() { Width = Math.Min(Height, Width)*10, Height = Math.Min(Height, Width) * 10 * (float)glControl.Height / (float)glControl.Width };
+            if ((float)glControl.Width <= (float)glControl.Height) screen = new Screen() { Width = Math.Min(Height, Width) * 10, Height = Math.Min(Height, Width) * 10 * (float)glControl.Height / (float)glControl.Width };
             else screen = new Screen() { Width = Math.Min(Height, Width) * 10 * (float)glControl.Width / (float)glControl.Height, Height = Math.Min(Height, Width) * 10 };
-            GL.Ortho(0.0, Math.Min(Height, Width) * 10 * (float)glControl.Width / (float)glControl.Height, 0.0, Math.Min(Height, Width) * 10, -1,1);
+            GL.Ortho(0.0, Math.Min(Height, Width) * 10 * (float)glControl.Width / (float)glControl.Height, 0.0, Math.Min(Height, Width) * 10, -1, 1);
             GL.MatrixMode(MatrixMode.Modelview);
         }
 
@@ -126,7 +127,7 @@ namespace Тест_OpenTK
         /// <param name="e"></param>
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (50 > glControl.Width || glControl.Width > 1000 || 
+            if (50 > glControl.Width || glControl.Width > 1000 ||
                 50 > glControl.Height || glControl.Height > 1000)
                 throw new GlWindowException();
 
@@ -136,27 +137,33 @@ namespace Тест_OpenTK
             {
                 var rv = r.Next(sizeStar / 2, sizeStar);
                 backgrounds.Add(new Star(
-                    new PointGrath(r.Next(0 + sizeStar, (int)screen.Width - sizeStar), 
-                    r.Next(0 + sizeStar, (int)screen.Height - sizeStar)), 
-                    new Speed(-20 + r.NextDouble() * 15, -4 + r.NextDouble() * 8), 
+                    new PointGrath(r.Next(0 + sizeStar, (int)screen.Width - sizeStar),
+                    r.Next(0 + sizeStar, (int)screen.Height - sizeStar)),
+                    new Speed(-20 + r.NextDouble() * 15, -4 + r.NextDouble() * 8),
                     new PointGrath(rv, rv), screen));
             }
 
             backgrounds.Add(new Earth(new PointGrath(1000, 1000), new Speed(0, 0), new PointGrath(650, 650), screen));
-            
+
             var size = 100;
             var count = 30;
             for (int i = 0; i < count; i++)
-                dangerous.Add(new Danger(new PointGrath((int)screen.Height - size, (i + 1) * size), 
-                    new Speed(6 + r.NextDouble() * 16, 6 + r.NextDouble() * 24), 
+                dangerous.Add(new Danger(new PointGrath((int)screen.Height - size, (i + 1) * size),
+                    new Speed(6 + r.NextDouble() * 16, 6 + r.NextDouble() * 24),
                     new PointGrath(size, size), screen));
 
             player = new Player(new PointGrath(0, 0), new Speed(0, 0), new PointGrath(250, 250), screen);
+
+            medicine.Add(new Medicine(new PointGrath((screen.Width / 2) + r.Next(-2000, 2000), (screen.Height / 2) + r.Next(-2000, 2000)), new Speed(0, 0), new PointGrath(60, 60), screen));
 
             player.MessageDie += Finish;
             LogEvent += Log.LogConsole;
             LogEvent += Log.LogFile;
         }
+
+        /// <summary>
+        /// Плохое завершение игры
+        /// </summary>
         public void Finish()
         {
             finish = true;
@@ -177,9 +184,8 @@ namespace Тест_OpenTK
             GL.Vertex2(screen.Width, 0);
             GL.End();
 
-
             GL.Color3(Color.Wheat);
-            TextGame.Print2DText(50, (float)(screen.Height - 200), "Вы проиграли! Мир захватил электронный разум вышедший из под контроля своих создателей.");
+            TextGame.Print2DText(50, (float)(screen.Height - 200), "Вы проиграли! Мир захватил электронный разум, вышедший из под контроля своих создателей.");
             TextGame.Print2DText(50, (float)(screen.Height - 350), "Неужели это конец?");
             TextGame.Print2DText(50, (float)(screen.Height - 500), "Мастер, готовы ли вы к перерождению во имя победы?");
             GL.PopMatrix();
@@ -209,7 +215,7 @@ namespace Тест_OpenTK
             if (finish) Finish();
             else DrawConsole();
         }
-        
+
         /// <summary>
         /// Обновление матрицы видового экрана OpenGL
         /// </summary>
@@ -218,7 +224,7 @@ namespace Тест_OpenTK
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.LoadIdentity();
-            
+
             GL.PushMatrix();
             GL.Translate(15, 15, 0);
 
@@ -227,9 +233,8 @@ namespace Тест_OpenTK
 
             for (int i = 0; i < bullet.Count; ++i)
             {
-                if (!bullet[i].Draw(r, new PointGrath(0,0)))
+                if (!bullet[i].Draw(r, new PointGrath(0, 0)))
                     bullet.RemoveAt(i);
-
             }
 
             var boom = false;
@@ -239,24 +244,33 @@ namespace Тест_OpenTK
                 for (int b = 0; b < bullet.Count; ++b)
                     if (dangerous[i].Collision(bullet[b]))
                     {
+                        score++;
                         boom = true;
                         System.Media.SystemSounds.Hand.Play();
                         bullet.RemoveAt(b);
                     }
 
-                if(dangerous[i].Collision(player))
+                for (int m = 0; m < medicine.Count; ++m)
+                    if (dangerous[i].Collision(medicine[m]))
+                    {
+                        boom = true;
+                        System.Media.SystemSounds.Hand.Play();
+                        medicine[m] = new Medicine(new PointGrath((screen.Width / 2) + r.Next(-2000, 2000), (screen.Height / 2) + r.Next(-2000, 2000)), new Speed(0, 0), new PointGrath(60, 60), screen);
+                    }
+
+                if (dangerous[i].Collision(player))
                 {
                     boom = true;
                     var damage = r.Next(1, 10);
                     LogEvent?.Invoke($"Столкновение с {dangerous[i].GetType()}. Вы получили урон в размере: {damage}", player.Pos.X, player.Pos.Y);
                     player.EnergyLow(damage);
+                    score++;
                     System.Media.SystemSounds.Asterisk.Play();
                     if (player.Energy <= 0) player?.Die();
                 }
 
                 if (!boom && !dangerous[i].Draw(r))
                 {
-                    
                     dangerous[i] = new Danger_lvl2(new PointGrath(r.Next((int)(screen.Width / 1.5), (int)(screen.Width - size)), r.Next((int)(0 - (size * 2)), (int)(screen.Height - (size * 2)))),
                         new Speed(6 + r.NextDouble() * 16, 6 + r.NextDouble() * 24),
                         new PointGrath(size, size), screen);
@@ -266,24 +280,46 @@ namespace Тест_OpenTK
                     LogEvent?.Invoke($"Враг {dangerous[i].GetType()} повержен", player.Pos.X, player.Pos.Y);
                     if (r.Next(0, 100) < 50)
                     {
+
                         dangerous[i] = new Danger_lvl2(new PointGrath(r.Next((int)(screen.Width / 1.5), (int)(screen.Width - size)), r.Next((int)(0 - (size * 2)), (int)(screen.Height - (size * 2)))),
-                            new Speed(12 + r.NextDouble() * 64, 6 + r.NextDouble() * 24),
-                            new PointGrath(size, size), screen);
+                            new Speed(12 + r.NextDouble() * 64, 6 + r.NextDouble() * 24), new PointGrath(size, size), screen);
+                        if (r.Next(0, 1000) > 900)
+                            dangerous.Add(new Danger_lvl2(new PointGrath(r.Next((int)(screen.Width / 1.5), (int)(screen.Width - size)), r.Next((int)(0 - (size * 2)), (int)(screen.Height - (size * 2)))),
+                            new Speed(12 + r.NextDouble() * 64, 6 + r.NextDouble() * 24), new PointGrath(size, size), screen));
                     }
                     else
                     {
                         dangerous[i] = new Danger(new PointGrath(r.Next((int)(0 + size), (int)(screen.Width / 4)), r.Next((int)(0 - (size * 2)), (int)(screen.Height - (size * 2)))),
                             new Speed(12 + r.NextDouble() * 64, 6 + r.NextDouble() * 24),
                             new PointGrath(size, size), screen);
+                        if (r.Next(0, 1000) > 700)
+                            dangerous.Add(new Danger(new PointGrath(r.Next((int)(0 + size), (int)(screen.Width / 4)), r.Next((int)(0 - (size * 2)), (int)(screen.Height - (size * 2)))),
+                            new Speed(12 + r.NextDouble() * 64, 6 + r.NextDouble() * 24), new PointGrath(size, size), screen));
                     }
+
                     boom = false;
                 }
-
-
-               
-            }      
+            }
 
             player.Draw(r, new PointGrath(lineX, lineY));
+
+            for (var i = 0; i < medicine.Count; ++i)
+            {
+                if (player.Collision(medicine[i]))
+                {
+                    player.Heal(medicine[i].Heal);
+                    medicine[i] = new Medicine(new PointGrath((screen.Width / 2) + r.Next(-2000, 2000), (screen.Height / 2) + r.Next(-2000, 2000)), new Speed(0, 0), new PointGrath(60, 60), screen);
+                }
+                else if (!medicine[i].Draw(r, new PointGrath(lineX, lineY)))
+                    medicine[i] = new Medicine(new PointGrath((screen.Width / 2) + r.Next(-2000, 2000), (screen.Height / 2) + r.Next(-2000, 2000)), new Speed(0, 0), new PointGrath(60, 60), screen);
+            }
+
+            GeneralizedDelegate<string> d = Summ<string>;
+            GL.Color3(Color.Crimson);
+            if (score < 5000)
+                TextGame.Print2DText(50, (float)(screen.Height - 200), d("Марафон дикой аптечки! ",$"Марафон дикой аптечки! Вы разрушили {score} из 5000 астероидов."));
+            else
+                TextGame.Print2DText(50, (float)(screen.Height - 200), d("Марафон дикой аптечки выы выйграли!", $"Со счетом {score} астероидов."));            
 
             GL.PopMatrix();
             // дожидаемся завершения визуализации кадра 
@@ -291,9 +327,30 @@ namespace Тест_OpenTK
             // сигнал для обновление элемента реализующего визуализацию. 
             glControl.Invalidate();
         }
-        
+
+        /// <summary>
+        /// Обобщенный делегат
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj1"></param>
+        /// <param name="obj2"></param>
+        delegate T GeneralizedDelegate<T>(T obj1, T obj2);
+
+        private T Summ<T>(T obj1, T obj2) => (dynamic)obj1 + (dynamic)obj2;
+
+        /// <summary>
+        /// Выход из приложения
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ВыходToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
 
+
+        /// <summary>
+        /// Нажатие клавиши мыши
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -302,15 +359,20 @@ namespace Тест_OpenTK
                 bullet.Add(new Bullet(new PointGrath(lineX + 39, lineY - 39/2), new Speed(100, 0), new PointGrath(250, 250), screen, 1));
             }
         }
-
+        
+        /// <summary>
+        /// Нажатие клавиши клавиатуры
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.ControlKey)
-            {
-                bullet.Add(new Bullet(new PointGrath(lineX + 39, lineY - 39 / 2), new Speed(100, 0), new PointGrath(250, 250), screen, 1));
-            }
-            if (e.KeyCode == Keys.Up) player.Up();
-            if (e.KeyCode == Keys.Down) player.Down();
+            if (e.KeyCode == Keys.ControlKey)            
+                bullet.Add(new Bullet(new PointGrath(lineX + 39, lineY - 39 / 2), new Speed(100, 0), new PointGrath(250, 250), screen, 1));            
+            if (e.KeyCode == Keys.Up)
+                player.Up();
+            if (e.KeyCode == Keys.Down)
+                player.Down();
         }
 
         private void Form1_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)

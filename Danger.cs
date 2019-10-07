@@ -65,12 +65,6 @@ namespace Тест_OpenTK
             GL.Vertex2(pos.X - dir.X * 20, pos.Y - dir.Y * 20);
             GL.End();
 
-
-
-            //Построение растрового изображения с произвольным (белым) цветом
-            //GL.Color3(Color.Red);
-            //Print2D((float)pos.X - bit.Width / 2, (float)pos.Y + bit.Height / 2);
-            //return true;
             return Update(r);
         }
 
